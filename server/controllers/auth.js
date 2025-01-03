@@ -2,8 +2,29 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 
-export const login = (req, res) => {
-    res.send("Login route");
+export const login = async (req, res) => {
+    try {
+        const { username, password } = req.body; // get username and password from request body
+
+        const user = await User.findOne({ username }); // find user by username
+        const isPasswordCorrect = await bcrypt.compare(password, user?.password || ""); // compare password
+
+        if(!user || !isPasswordCorrect) {
+            return res.status(400).json({ error: "Invalid credentials" });
+        }
+
+        generateTokenAndSetCookie(user._id, res); // generate token and set cookie
+
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            username: user.username,
+            profilePicture: user.profilePicture
+        }); // send user data in response
+    } catch (error) {
+        console.log("Error in login controller: ", error.message);
+        res.status(500).json({ error: "Something went wrong" });
+    }
 }
 
 export const signup = async (req, res) => {
@@ -52,6 +73,7 @@ export const signup = async (req, res) => {
         }
 
     } catch (error) {
+        console.log("Error in signup controller: ", error.message);
         res.status(500).json({ error: "Something went wrong" });
     }
 }
