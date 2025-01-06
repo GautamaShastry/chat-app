@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import GenderCheckbox from './GenderCheckbox'; // Ensure you have GenderCheckbox in the same directory
+import useSignup from '../../hooks/useSignup';
 
 const Signup = () => {
     const [inputs, setInputs] = useState({
@@ -12,32 +13,24 @@ const Signup = () => {
         gender: '',
     });
 
+    const { loading, signup } = useSignup();
+
     const handleGenderChange = (gender) => {
         setInputs({ ...inputs, gender });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Basic validation example
-        if (!inputs.gender) {
-            alert('Please select a gender.');
-            return;
-        }
-        if (inputs.password !== inputs.confirmPassword) {
-            alert('Passwords do not match!');
-            return;
-        }
-        console.log('Form submitted:', inputs);
+        await signup(inputs);
     };
 
     return (
         <div
             className="flex flex-col items-center justify-center min-h-screen bg-cover px-4"
-            style={{ backgroundImage: "url('path/to/your/background/image.jpg')" }}
         >
             <div className="w-full max-w-md p-10 rounded-xl shadow-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-black bg-opacity-70 backdrop-filter backdrop-blur-3xl">
                 <h1 className="text-5xl font-bold text-center text-white mb-8">
-                    Signup <span className="text-blue-400">ChatApp</span>
+                    Signup <span className="text-blue-400">ChatBook</span>
                 </h1>
 
                 <form onSubmit={handleSubmit}>
@@ -108,12 +101,22 @@ const Signup = () => {
                     />
 
                     {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className="w-full py-3 mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-lg shadow-lg transition duration-300"
-                    >
-                        Signup
-                    </button>
+                    <div>
+                        <button
+                            className={`w-full py-3 mt-2 font-bold text-white rounded-md transition duration-300 
+                                ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 border border-slate-700"}`}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <div className="flex items-center justify-center">
+                                    <span className="loading loading-spinner w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></span>
+                                    <span className="ml-2">Loading...</span>
+                                </div>
+                            ) : (
+                                "Sign Up"
+                            )}
+                        </button>
+                    </div>
 
                     {/* Link to Login */}
                     <Link
