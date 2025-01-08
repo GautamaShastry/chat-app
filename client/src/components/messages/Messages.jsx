@@ -2,9 +2,11 @@ import { useEffect, useRef } from "react";
 import useGetMessages from "../../hooks/useGetMessages";
 import Message from "./Message";
 import MessageSkeleton from "../skeleton/MessageSkeleton";
+import useListenMessages from "../../hooks/useListenMessages";
 
 const Messages = () => {
     const {messages, loading} = useGetMessages();
+    useListenMessages();
     const lastMessageRef = useRef();
 
     // whenever messages changes(new message arrives) scroll down to the latest message(useEffect is triggered)
