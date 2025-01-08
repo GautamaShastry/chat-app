@@ -11,6 +11,6 @@ export default useConversation;
 
 /*
 It is a small state management library..just like redux but on much smaller scale. 
-
+messages and selected conversations are the states managed on zustand
 
 */
